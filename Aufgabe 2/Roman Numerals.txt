@@ -1,0 +1,160 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+)
+
+func main() {
+	// Tests
+	
+	fmt.Println("Test 3A")
+
+	rom1 := []RomanLetter{'C', 'X', 'X', 'V', 'I'}
+	int1, int2, int3, int4, int5, int6, int7 := task3a(rom1)
+	fmt.Println("CXXVI")
+	fmt.Printf("I:%d V:%d X:%d L:%d C:%d D:%d M:%d\n", int1, int2, int3, int4, int5, int6, int7)
+
+	rom2 := []RomanLetter{'C', 'D', 'X', 'C', 'I', 'X'}
+	int1, int2, int3, int4, int5, int6, int7 = task3a(rom2)
+	fmt.Println("CDXCIX")
+	fmt.Printf("I:%d V:%d X:%d L:%d C:%d D:%d M:%d\n", int1, int2, int3, int4, int5, int6, int7)
+
+	rom3 := []RomanLetter{'M', 'D', 'C', 'L', 'X', 'V', 'I'}
+	int1, int2, int3, int4, int5, int6, int7 = task3a(rom3)
+	fmt.Println("MDCLXVI")
+	fmt.Printf("I:%d V:%d X:%d L:%d C:%d D:%d M:%d\n", int1, int2, int3, int4, int5, int6, int7)
+
+	fmt.Println("\nTest 3B")
+
+	romansList := task3b(10, 5000, 5)
+
+	for i, roman := range romansList {
+		fmt.Printf("Zahl %d: %s\n", i+1, string(roman))
+	}
+	
+	fmt.Println("\nTest 3C")
+
+	input1 := "MCMLXXXIV"
+	letters1, ok1 := task3c(input1)
+	fmt.Printf("Input: %s -> Erfolg: %t, Ergebnis: %s\n", input1, ok1, string(letters1))
+
+	input2 := "mCmXcIx"
+	letters2, ok2 := task3c(input2)
+	fmt.Printf("Input: %s -> Erfolg: %t, Ergebnis: %s\n", input2, ok2, string(letters2))
+
+	input3 := "MCMX-Hallo"
+	letters3, ok3 := task3c(input3)
+	fmt.Printf("Input: %s -> Erfolg: %t, Ergebnis: %s\n", input3, ok3, string(letters3))
+}
+
+type RomanLetter rune
+
+const (
+	I RomanLetter = 'I'
+	V RomanLetter = 'V'
+	X RomanLetter = 'X'
+	L RomanLetter = 'L'
+	C RomanLetter = 'C'
+	D RomanLetter = 'D'
+	M RomanLetter = 'M'
+)
+
+// Implement a function that counts the number of occurrences of roman letters in a roman numeral.
+func task3a(letters []RomanLetter) (int, int, int, int, int, int, int) {
+	i := 0
+	v := 0
+	x := 0
+	l := 0
+	c := 0
+	d := 0
+	m := 0
+
+	for _, letter := range letters {
+		switch letter {
+		case I:
+			i++
+		case V:
+			v++
+		case X:
+			x++
+		case L:
+			l++
+		case C:
+			c++
+		case D:
+			d++
+		case M:
+			m++
+		}
+	}
+
+	return i, v, x, l, c, d, m
+}
+
+
+// Generate n roman numerals where the value of each roman numeral shall be in between low and high.
+
+// Hilfsfunktion zum konvertieren von Integer zu RomanLetter
+func intToRoman(n int) []RomanLetter {
+	// Liste römischer Zahlen Kombinationen
+	symbols := []string{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"}
+	// Dazugehörige Werte
+	values := []int{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1}
+
+	var result []RomanLetter
+
+	for i := 0; i < len(symbols); i++ {
+		for n >= values[i] {
+			n -= values[i]
+
+			for _, ch := range symbols[i] {
+				result = append(result, RomanLetter(rune(ch)))
+			}
+		}
+	}
+	
+	return result
+}
+
+func task3b(low int, high int, n int) [][]RomanLetter {
+	result := make([][]RomanLetter, n)
+
+	for i := 0; i < n; i++ {
+	    value := rand.Intn(high-low+1)+low
+	    result[i] = intToRoman(value)
+	}
+
+	return result
+}
+
+// Implement a parser for roman numerals that accepts a mix of lowercase and uppercase letters.
+func task3c(s string) ([]RomanLetter, bool) {
+	s = strings.ToUpper(s)
+
+	result := make([]RomanLetter, 0, len(s))
+
+	for _, ch := range s {
+		switch ch {
+		case 'I':
+			result = append(result, I)
+		case 'V':
+			result = append(result, V)
+		case 'X':
+			result = append(result, X)
+		case 'L':
+			result = append(result, L)
+		case 'C':
+			result = append(result, C)
+		case 'D':
+			result = append(result, D)
+		case 'M':
+			result = append(result, M)
+		default:
+			return nil, false
+		}
+	}
+
+	return result, true
+}
